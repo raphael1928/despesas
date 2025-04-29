@@ -63,7 +63,7 @@ flutter run
 
 ## 📸 Screenshot
 
-![App Screenshot](link-para-screenshot-ou-coloque-localmente)
+![App Screenshot](https://github.com/raphael1928/despesas/blob/master/assets/images/image01.jpg?raw=true)
 
 ---
 
