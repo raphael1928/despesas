@@ -130,12 +130,27 @@ class _RelatorioPageState extends State<RelatorioPage> {
                         final subcategorias = entry.value;
                         return ExpansionTile(
                           title: Text(categoria, style: TextStyle(fontWeight: FontWeight.bold)),
-                          children: subcategorias.entries.map((sub) {
-                            return ListTile(
-                              title: Text(sub.key),
-                              trailing: Text(NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(sub.value)),
-                            );
-                          }).toList(),
+                          children: [
+                            ...subcategorias.entries.map((sub) {
+                              return ListTile(
+                                title: Text(sub.key),
+                                trailing: Text(NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(sub.value)),
+                              );
+                            }).toList(),
+                            Divider(),
+                            ListTile(
+                              title: Text(
+                                'Subtotal $categoria',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              trailing: Text(
+                                NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(
+                                  subcategorias.values.fold(0.0, (soma, valor) => soma + valor),
+                                ),
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
                         );
                       }).toList(),
                     ),
