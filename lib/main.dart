@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'relatorio_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -216,8 +217,22 @@ class _DespesasPageState extends State<DespesasPage> {
         .collection('despesas');
 
     return Scaffold(
-        appBar: AppBar(title: Text('Despesas - ${widget.nomeUsuario}')),
-        body: Padding(
+      appBar: AppBar(
+        title: Text('Despesas - ${widget.nomeUsuario}'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.analytics), // Ícone de relatório
+            tooltip: 'Relatório',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => RelatorioPage()),
+              );
+            },
+          ),
+        ],
+      ),
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
     child: Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
