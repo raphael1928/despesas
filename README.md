@@ -1,16 +1,81 @@
-# flu
 
-A new Flutter project.
+# 📲 Controle de Despesas - Flutter App
 
-## Getting Started
+Aplicativo simples e eficiente para controle de despesas diárias, desenvolvido em Flutter com backend no Firebase Firestore.
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
+## ✨ Funcionalidades
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Cadastro rápido de usuário apenas com nome (sem login complexo).
+- Registro de despesas com:
+    - Categoria
+    - Subcategoria
+    - Valor
+    - Descrição
+    - Data
+- Cálculo automático do total diário.
+- Edição e exclusão de despesas.
+- Sincronização em tempo real com Firestore.
+- Categorias e subcategorias dinâmicas (carregadas do Firestore).
+- Suporte a múltiplos usuários.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+- Flutter 3.x
+- Dart
+- Firebase Core
+- Firebase Firestore
+- Shared Preferences
+- Packages:
+    - brasil_fields
+    - flutter_masked_text2
+    - intl
+
+---
+
+## 🚀 Como Rodar o Projeto
+
+1. Clone o repositório:
+
+```bash
+git clone https://github.com/seu-usuario/seu-repo.git
+cd seu-repo
+```
+
+2. Instale as dependências:
+
+```bash
+flutter pub get
+```
+
+3. Adicione seu arquivo `google-services.json` em `android/app/`.
+
+4. Execute o app:
+
+```bash
+flutter run
+```
+
+---
+
+## 📸 Screenshot
+
+![App Screenshot](link-para-screenshot-ou-coloque-localmente)
+
+---
+
+## 📈 Melhorias Futuras
+
+- Implementar autenticação Firebase.
+- Filtros de despesas por semana, mês, e ano.
+- Geração de gráficos e relatórios (Ex.: PDF, Excel).
+- Melhorias de UI/UX.
+
+---
+
+## 👨‍💻 Autor
+
+Feito com ❤️ por Raphael 🚀
