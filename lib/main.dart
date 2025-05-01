@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'relatorio_page.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -161,7 +162,19 @@ class _DespesasPageState extends State<DespesasPage> {
     }
   }
 
-  void _salvarOuAtualizarDespesa() {
+  Future<bool> _temInternet() async {
+    final result = await Connectivity().checkConnectivity();
+    return result == ConnectivityResult.mobile || result == ConnectivityResult.wifi;
+  }
+
+  void _salvarOuAtualizarDespesa() async {
+    if (!await _temInternet()) {
+    ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text('Sem conexão com a internet. Tente novamente.')),
+    );
+    return;
+    }
+
     if (_categoriaSelecionada != null &&
         _subcategoriaSelecionada != null &&
         _valorController.numberValue > 0) {
@@ -221,13 +234,20 @@ class _DespesasPageState extends State<DespesasPage> {
         title: Text('Despesas - ${widget.nomeUsuario}'),
         actions: [
           IconButton(
-            icon: Icon(Icons.analytics), // Ícone de relatório
+            icon: Icon(Icons.analytics),
             tooltip: 'Relatório',
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => RelatorioPage()),
               );
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.refresh),
+            tooltip: 'Atualizar',
+            onPressed: () {
+              _carregarCategorias(); // chama o carregamento novamente
             },
           ),
         ],
@@ -360,7 +380,26 @@ class _DespesasPageState extends State<DespesasPage> {
                             IconButton(
                               icon: Icon(Icons.delete, color: Colors.red),
                               onPressed: () {
-                                ref.doc(doc.id).delete();
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Text('Confirmar exclusão'),
+                                    content: Text('Tem certeza que deseja excluir esta despesa?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context), // cancela
+                                        child: Text('Não'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          ref.doc(doc.id).delete();
+                                        },
+                                        child: Text('Sim'),
+                                      ),
+                                    ],
+                                  ),
+                                );
                               },
                             ),
                           ],
