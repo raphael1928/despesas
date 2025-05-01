@@ -1,4 +1,3 @@
-
 # 📲 Controle de Despesas - Flutter App
 
 Aplicativo simples e eficiente para controle de despesas diárias, desenvolvido em Flutter com backend no Firebase Firestore.
@@ -9,16 +8,17 @@ Aplicativo simples e eficiente para controle de despesas diárias, desenvolvido 
 
 - Cadastro rápido de usuário apenas com nome (sem login complexo).
 - Registro de despesas com:
-    - Categoria
-    - Subcategoria
-    - Valor
-    - Descrição
-    - Data
+  - Categoria
+  - Subcategoria
+  - Valor
+  - Descrição
+  - Data
 - Cálculo automático do total diário.
 - Edição e exclusão de despesas.
 - Sincronização em tempo real com Firestore.
 - Categorias e subcategorias dinâmicas (carregadas do Firestore).
 - Suporte a múltiplos usuários.
+- Tela de relatório com totais por categoria/subcategoria e filtro de data.
 
 ---
 
@@ -30,9 +30,9 @@ Aplicativo simples e eficiente para controle de despesas diárias, desenvolvido 
 - Firebase Firestore
 - Shared Preferences
 - Packages:
-    - brasil_fields
-    - flutter_masked_text2
-    - intl
+  - brasil_fields
+  - flutter_masked_text2
+  - intl
 
 ---
 
@@ -73,6 +73,14 @@ flutter run
 - Filtros de despesas por semana, mês, e ano.
 - Geração de gráficos e relatórios (Ex.: PDF, Excel).
 - Melhorias de UI/UX.
+
+---
+
+## 🤖 Link da Conversa com o ChatGPT
+
+Para histórico completo do desenvolvimento, decisões e geração de arquivos:
+
+🔗 https://chat.openai.com/share/2df7f1ae-d262-4a3e-b70e-e9f8bc3a13fc
 
 ---
 
