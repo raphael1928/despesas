@@ -175,6 +175,35 @@ class _DespesasPageState extends State<DespesasPage> {
     return;
     }
 
+    if (_categoriaSelecionada == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Selecione uma categoria.')),
+      );
+      return;
+    }
+
+    if (_subcategoriaSelecionada == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Selecione uma subcategoria.')),
+      );
+      return;
+    }
+
+    if (_valorController.numberValue == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Informe um valor válido.')),
+      );
+      return;
+    }
+
+    if (_categoriaSelecionada == 'Outros' &&
+        _descricaoController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Informe a descrição quando usar a categoria "Outros".')),
+      );
+      return;
+    }
+
     if (_categoriaSelecionada != null &&
         _subcategoriaSelecionada != null &&
         _valorController.numberValue > 0) {
