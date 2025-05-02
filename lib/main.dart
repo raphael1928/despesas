@@ -204,6 +204,14 @@ class _DespesasPageState extends State<DespesasPage> {
       return;
     }
 
+    if (_subcategoriaSelecionada == 'Assinaturas' &&
+        _descricaoController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Informe a descrição quando usar a subcategoria "Assinaturas".')),
+      );
+      return;
+    }
+
     if (_categoriaSelecionada != null &&
         _subcategoriaSelecionada != null &&
         _valorController.numberValue > 0) {
