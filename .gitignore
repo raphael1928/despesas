@@ -7,6 +7,8 @@ build/
 ios/Flutter/Flutter.framework
 ios/Flutter/Flutter.podspec
 flutter_export_environment.sh
+lib/firebase_options.dart
+
 
 # Android related
 **/android/**/gradle-wrapper.jar
