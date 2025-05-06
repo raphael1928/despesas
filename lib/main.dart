@@ -1,3 +1,4 @@
+import 'package:flu/pages/coletar_nome_page.dart';
 import 'package:flutter/material.dart';
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/services.dart';
@@ -6,13 +7,33 @@ import 'package:intl/intl.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'relatorio_page.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'app.dart';
+import 'features/relatorios/presentation/views/relatorio_page.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'core/services/shared_prefs_service.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(DespesasApp());
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  final nomeUsuario = await SharedPrefsService.obterNomeUsuario();
+
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Controle de Despesas',
+      home: nomeUsuario == null
+          ? ColetarNomePage()
+          : MyApp(usuario: nomeUsuario),
+    ),
+  );
 }
 
 class DespesasApp extends StatelessWidget {
