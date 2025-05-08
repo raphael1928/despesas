@@ -7,6 +7,7 @@ import '../../../relatorios/presentation/views/relatorio_page.dart';
 
 class DespesasPage extends StatefulWidget {
   final String usuario;
+
   const DespesasPage({required this.usuario, Key? key}) : super(key: key);
 
   @override
@@ -24,6 +25,7 @@ class _DespesasPageState extends State<DespesasPage> {
 
   Map<String, List<String>> _categoriasMap = {};
   List<QueryDocumentSnapshot<Map<String, dynamic>>> _despesasDoDia = [];
+  double _totalDoDia = 0.0;
 
   @override
   void initState() {
@@ -33,7 +35,8 @@ class _DespesasPageState extends State<DespesasPage> {
   }
 
   Future<void> _carregarCategorias() async {
-    final snapshot = await FirebaseFirestore.instance.collection('categorias').get();
+    final snapshot =
+        await FirebaseFirestore.instance.collection('categorias').get();
 
     Map<String, List<String>> map = {};
     for (var doc in snapshot.docs) {
@@ -53,14 +56,22 @@ class _DespesasPageState extends State<DespesasPage> {
         .orderBy('data', descending: true)
         .get();
 
+    final docsFiltrados = snapshot.docs.where((doc) {
+      final data = DateTime.tryParse(doc['data']);
+      return data != null &&
+          data.year == _dataSelecionada.year &&
+          data.month == _dataSelecionada.month &&
+          data.day == _dataSelecionada.day;
+    }).toList();
+
+    final total = docsFiltrados.fold<double>(
+      0.0,
+          (soma, doc) => soma + (doc['valor'] as num).toDouble(),
+    );
+
     setState(() {
-      _despesasDoDia = snapshot.docs.where((doc) {
-        final data = DateTime.tryParse(doc['data']);
-        if (data == null) return false;
-        return data.year == _dataSelecionada.year &&
-            data.month == _dataSelecionada.month &&
-            data.day == _dataSelecionada.day;
-      }).toList();
+      _despesasDoDia = docsFiltrados;
+      _totalDoDia = total;
     });
   }
 
@@ -76,7 +87,9 @@ class _DespesasPageState extends State<DespesasPage> {
       return;
     }
 
-    final valor = UtilBrasilFields.converterMoedaParaDouble(_valorController.text);
+    final valor = UtilBrasilFields.converterMoedaParaDouble(
+      _valorController.text,
+    );
     final data = DateFormat('yyyy-MM-dd').format(_dataSelecionada);
 
     final ref = FirebaseFirestore.instance
@@ -167,10 +180,63 @@ class _DespesasPageState extends State<DespesasPage> {
     setState(() {
       _categoriaSelecionada = dados['categoria'];
       _subcategoriaSelecionada = dados['subcategoria'];
-      _valorController.text = dados['valor'].toStringAsFixed(2).replaceAll('.', ',');
+      _valorController.text = dados['valor']
+          .toStringAsFixed(2)
+          .replaceAll('.', ',');
       _descricaoController.text = dados['descricao'] ?? '';
       _documentoEmEdicao = doc.id;
     });
+  }
+
+  Future<void> _alterarDataDespesa(
+    BuildContext context,
+    DocumentSnapshot doc,
+  ) async {
+    final dataAtual = DateTime.tryParse(doc['data']) ?? DateTime.now();
+
+    final novaData = await showDatePicker(
+      context: context,
+      initialDate: dataAtual,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (novaData == null) return;
+
+    final confirmado = await showDialog<bool>(
+      context: context,
+      builder:
+          (ctx) => AlertDialog(
+            title: Text('Confirmar alteração'),
+            content: Text(
+              'Deseja alterar a data da despesa para ${DateFormat('dd/MM/yyyy').format(novaData)}?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: Text('Não'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: Text('Sim'),
+              ),
+            ],
+          ),
+    );
+
+    if (confirmado == true) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.usuario)
+          .collection('despesas')
+          .doc(doc.id)
+          .update({'data': novaData.toIso8601String()});
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Data atualizada com sucesso.')));
+      _carregarDespesas(); // ou recarregue como preferir
+    }
   }
 
   @override
@@ -181,10 +247,7 @@ class _DespesasPageState extends State<DespesasPage> {
       appBar: AppBar(
         title: Text('Controle de Despesas'),
         actions: [
-          IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: _carregarDespesas,
-          ),
+          IconButton(icon: Icon(Icons.refresh), onPressed: _carregarDespesas),
           IconButton(
             icon: Icon(Icons.insert_chart),
             onPressed: () {
@@ -199,19 +262,19 @@ class _DespesasPageState extends State<DespesasPage> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text('Data: $dataFormatada'),
           ElevatedButton(
             onPressed: _selecionarData,
-            child: Text('Selecionar Data'),
+            child: Text(DateFormat('dd/MM/yyyy').format(_dataSelecionada)),
           ),
           SizedBox(height: 10),
           DropdownButton<String>(
             isExpanded: true,
             hint: Text('Categoria'),
             value: _categoriaSelecionada,
-            items: _categoriasMap.keys.map((cat) {
-              return DropdownMenuItem(value: cat, child: Text(cat));
-            }).toList(),
+            items:
+                _categoriasMap.keys.map((cat) {
+                  return DropdownMenuItem(value: cat, child: Text(cat));
+                }).toList(),
             onChanged: (value) {
               setState(() {
                 _categoriaSelecionada = value;
@@ -224,10 +287,14 @@ class _DespesasPageState extends State<DespesasPage> {
             isExpanded: true,
             hint: Text('Subcategoria'),
             value: _subcategoriaSelecionada,
-            items: (_categoriasMap[_categoriaSelecionada] ?? [])
-                .map((sub) => DropdownMenuItem(value: sub, child: Text(sub)))
-                .toList(),
-            onChanged: (value) => setState(() => _subcategoriaSelecionada = value),
+            items:
+                (_categoriasMap[_categoriaSelecionada] ?? [])
+                    .map(
+                      (sub) => DropdownMenuItem(value: sub, child: Text(sub)),
+                    )
+                    .toList(),
+            onChanged:
+                (value) => setState(() => _subcategoriaSelecionada = value),
           ),
           SizedBox(height: 10),
           TextField(
@@ -242,14 +309,16 @@ class _DespesasPageState extends State<DespesasPage> {
           SizedBox(height: 10),
           TextField(
             controller: _descricaoController,
-            decoration: InputDecoration(
-              labelText: 'Descrição (obrigatória se "Outros")',
-            ),
+            decoration: InputDecoration(labelText: 'Descrição'),
           ),
           SizedBox(height: 10),
           ElevatedButton(
             onPressed: _salvarOuAtualizar,
-            child: Text(_documentoEmEdicao != null ? 'Salvar Alteração' : 'Adicionar Despesa'),
+            child: Text(
+              _documentoEmEdicao != null
+                  ? 'Salvar Alteração'
+                  : 'Adicionar Despesa',
+            ),
           ),
           SizedBox(height: 20),
           Divider(),
@@ -259,27 +328,60 @@ class _DespesasPageState extends State<DespesasPage> {
           ),
           ..._despesasDoDia.map((doc) {
             final data = doc.data();
-            return ListTile(
-              title: Text('${data['categoria']} - ${data['subcategoria']}'),
-              subtitle: data['descricao'] != null && data['descricao'].toString().isNotEmpty
-                  ? Text(data['descricao'])
-                  : null,
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('R\$ ${data['valor'].toStringAsFixed(2)}'),
-                  IconButton(
-                    icon: Icon(Icons.edit, color: Colors.orange),
-                    onPressed: () => _preencherParaEdicao(doc),
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 2.0,
+                    vertical: 2.0,
+                  ), // margem bem reduzida
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${data['categoria']} - ${data['subcategoria']}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            SizedBox(height: 2),
+                            Text(
+                              'R\$ ${data['valor'].toStringAsFixed(2)}',
+                              style: TextStyle(color: Colors.grey[700]),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.calendar_today, color: Colors.blue),
+                        onPressed: () => _alterarDataDespesa(context, doc),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.edit, color: Colors.orange),
+                        onPressed: () => _preencherParaEdicao(doc),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => _confirmarExclusao(doc.id),
+                      ),
+                    ],
                   ),
-                  IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => _confirmarExclusao(doc.id),
-                  ),
-                ],
-              ),
+                ),
+                Divider(height: 1, color: Colors.grey.shade300),
+              ],
             );
           }).toList(),
+          SizedBox(height: 12),
+          Text(
+            'Total do dia: R\$ ${_totalDoDia.toStringAsFixed(2)}',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
     );
