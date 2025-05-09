@@ -9,9 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'app.dart';
-import 'features/relatorios/presentation/views/relatorio_page.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'features/reports/presentation/views/reports_page.dart';
 import 'firebase_options.dart';
 import 'core/services/shared_prefs_service.dart';
 
@@ -247,7 +245,7 @@ class _DespesasPageState extends State<DespesasPage> {
       final ref = FirebaseFirestore.instance
           .collection('users')
           .doc(widget.nomeUsuario)
-          .collection('despesas');
+          .collection('expenses');
 
       if (_idEmEdicao == null) {
         ref.add(dadosDespesa);
@@ -285,7 +283,7 @@ class _DespesasPageState extends State<DespesasPage> {
     final ref = FirebaseFirestore.instance
         .collection('users')
         .doc(widget.nomeUsuario)
-        .collection('despesas');
+        .collection('expenses');
 
     return Scaffold(
       appBar: AppBar(

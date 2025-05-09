@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'features/despesas/presentation/viewmodels/despesa_viewmodel.dart';
-import 'features/despesas/domain/usecases/salvar_despesa_usecase.dart';
-import 'features/despesas/data/repositories/despesa_repository_impl.dart';
-import 'features/despesas/data/datasources/firebase_despesa_datasource.dart';
-import 'features/despesas/presentation/views/despesas_page.dart';
+import 'features/expenses/presentation/viewmodels/expense_viewmodel.dart';
+import 'features/expenses/domain/usecases/save_expense_usecase.dart';
+import 'features/expenses/data/repositories/expenses_repository_impl.dart';
+import 'features/expenses/data/datasources/firebase_expenses_datasource.dart';
+import 'features/expenses/presentation/views/expenses_page.dart';
 import 'core/theme/app_theme.dart';
 
 class MyApp extends StatelessWidget {
