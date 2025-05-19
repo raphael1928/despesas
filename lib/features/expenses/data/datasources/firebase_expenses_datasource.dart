@@ -11,7 +11,7 @@ class FirebaseDespesaDatasource {
     await firestore
         .collection('users')
         .doc(usuario)
-        .collection('expenses')
+        .collection('despesas')
         .doc(despesa.id)
         .set(despesa.toMap());
   }
@@ -20,7 +20,7 @@ class FirebaseDespesaDatasource {
     await firestore
         .collection('users')
         .doc(usuario)
-        .collection('expenses')
+        .collection('despesas')
         .doc(despesa.id)
         .update(despesa.toMap());
   }
@@ -29,7 +29,7 @@ class FirebaseDespesaDatasource {
     await firestore
         .collection('users')
         .doc(usuario)
-        .collection('expenses')
+        .collection('despesas')
         .doc(id)
         .delete();
   }
@@ -41,7 +41,7 @@ class FirebaseDespesaDatasource {
     final snapshot = await firestore
         .collection('users')
         .doc(usuario)
-        .collection('expenses')
+        .collection('despesas')
         .where('data', isGreaterThanOrEqualTo: inicio.toIso8601String())
         .where('data', isLessThanOrEqualTo: fim.toIso8601String())
         .get();

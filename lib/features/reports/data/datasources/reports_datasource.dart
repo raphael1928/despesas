@@ -11,7 +11,7 @@ class RelatorioDatasource {
     final snapshot = await firestore
         .collection('users')
         .doc(usuario)
-        .collection('expenses')
+        .collection('despesas')
         .where('data', isGreaterThanOrEqualTo: de.toIso8601String())
         .where('data', isLessThanOrEqualTo: ate.toIso8601String())
         .get();

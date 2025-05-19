@@ -13,7 +13,6 @@ import 'features/reports/presentation/views/reports_page.dart';
 import 'firebase_options.dart';
 import 'core/services/shared_prefs_service.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -245,7 +244,7 @@ class _DespesasPageState extends State<DespesasPage> {
       final ref = FirebaseFirestore.instance
           .collection('users')
           .doc(widget.nomeUsuario)
-          .collection('expenses');
+          .collection('despesas');
 
       if (_idEmEdicao == null) {
         ref.add(dadosDespesa);
@@ -283,7 +282,7 @@ class _DespesasPageState extends State<DespesasPage> {
     final ref = FirebaseFirestore.instance
         .collection('users')
         .doc(widget.nomeUsuario)
-        .collection('expenses');
+        .collection('despesas');
 
     return Scaffold(
       appBar: AppBar(

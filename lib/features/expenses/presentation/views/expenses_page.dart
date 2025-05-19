@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../pages/coletar_nome_page.dart';
+import '../../../recurring_expenses/presentation/views/recurring_expenses_page.dart';
 import '../../../reports/presentation/views/reports_page.dart';
 import 'package:flu/features/subscriptions/presentation/views/subscriptions_page.dart';
 
@@ -53,7 +56,7 @@ class _DespesasPageState extends State<DespesasPage> {
     final snapshot = await FirebaseFirestore.instance
         .collection('users')
         .doc(widget.usuario)
-        .collection('expenses')
+        .collection('despesas')
         .orderBy('data', descending: true)
         .get();
 
@@ -96,7 +99,7 @@ class _DespesasPageState extends State<DespesasPage> {
     final ref = FirebaseFirestore.instance
         .collection('users')
         .doc(widget.usuario)
-        .collection('expenses');
+        .collection('despesas');
 
     if (_documentoEmEdicao != null) {
       await ref.doc(_documentoEmEdicao).update({
@@ -169,7 +172,7 @@ class _DespesasPageState extends State<DespesasPage> {
     await FirebaseFirestore.instance
         .collection('users')
         .doc(widget.usuario)
-        .collection('expenses')
+        .collection('despesas')
         .doc(docId)
         .delete();
 
@@ -229,7 +232,7 @@ class _DespesasPageState extends State<DespesasPage> {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(widget.usuario)
-          .collection('expenses')
+          .collection('despesas')
           .doc(doc.id)
           .update({'data': novaData.toIso8601String()});
 
@@ -281,6 +284,19 @@ class _DespesasPageState extends State<DespesasPage> {
               ),
             ),
             ListTile(
+              leading: Icon(Icons.cached),
+              title: Text('Despesas Recorrentes'),
+              onTap: () {
+                Navigator.pop(context); // fecha o drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => RecurringExpensesPage(usuario: widget.usuario),
+                  ),
+                );
+              },
+            ),
+            ListTile(
               leading: Icon(Icons.stream),
               title: Text('Assinaturas'),
               onTap: () {
@@ -291,6 +307,22 @@ class _DespesasPageState extends State<DespesasPage> {
                 );
               },
             ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('Sair'),
+              onTap: () async {
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.remove('nomeUsuario');
+
+                if (!context.mounted) return;
+
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => ColetarNomePage()),
+                      (route) => false,
+                );
+              },
+            ),
+
           ],
         ),
       ),

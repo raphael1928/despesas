@@ -36,7 +36,7 @@ class _RelatorioPageState extends State<RelatorioPage> {
     final ref = FirebaseFirestore.instance
         .collection('users')
         .doc(_nomeUsuario)
-        .collection('expenses');
+        .collection('despesas');
 
     final snapshot = await ref
         .where('data', isGreaterThanOrEqualTo: _formatarData(_dataInicial))
