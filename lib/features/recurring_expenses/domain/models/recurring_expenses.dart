@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart'; // Necessário para DateUtils.getDaysInMonth
+import 'package:flutter/material.dart';
 
 class RecurringExpenses {
   final String id;
@@ -9,6 +9,7 @@ class RecurringExpenses {
   final double valor;
   final bool isPaid;
   final DateTime? dataPagamento;
+  final int? parcelasTotais;
 
   RecurringExpenses({
     required this.id,
@@ -18,9 +19,10 @@ class RecurringExpenses {
     required this.valor,
     required this.isPaid,
     required this.dataPagamento,
+    this.parcelasTotais,
   });
 
-  // Calcula renovação com base no mês/ano atual e dia da assinatura
+  /// Calcula a data de renovação com base no mês atual
   DateTime get renewalDate {
     final now = DateTime.now();
     return DateTime(
@@ -30,7 +32,7 @@ class RecurringExpenses {
     );
   }
 
-  // Retorna caminho do ícone com base no nome
+  /// Caminho do ícone conforme tipo
   String get iconPath {
     final lower = name.toLowerCase();
 
@@ -58,7 +60,7 @@ class RecurringExpenses {
     final valor = (data['valor'] as num?)?.toDouble() ?? 0.0;
     final isPaid = data['pago'] ?? false;
     final dataPagamento = data['dataPagamento'] != null
-        ? DateTime.tryParse(data['dataPagamento']) ?? null
+        ? DateTime.tryParse(data['dataPagamento'])
         : null;
 
     DateTime date;
@@ -77,7 +79,8 @@ class RecurringExpenses {
       isActive: data['ativo'] ?? true,
       valor: valor,
       isPaid: isPaid,
-      dataPagamento: dataPagamento
+      dataPagamento: dataPagamento,
+      parcelasTotais: data['parcelasTotais'], // novo campo
     );
   }
 }

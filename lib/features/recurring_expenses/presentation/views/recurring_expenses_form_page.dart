@@ -24,23 +24,17 @@ class _RecurringExpensesFormPageState extends State<RecurringExpensesFormPage> {
   final _formKey = GlobalKey<FormState>();
 
   final _valorController = TextEditingController();
+  final _parcelasController = TextEditingController();
+
   String? _selectedType;
   DateTime? _signUpDate;
   bool _isActive = true;
+  bool _ehParcelado = false;
 
   final List<String> _types = [
-    'Aluguel',
-    'Energia',
-    'Água',
-    'Internet',
-    'Telefone',
-    'Dentista',
-    'Beach Tennis Arena',
-    'Beach Tennis Aulas',
-    'Carro',
-    'Lote',
-    'Condomínio',
-    'IPVA',
+    'Aluguel', 'Energia', 'Água', 'Internet', 'Telefone', 'Dentista',
+    'Beach Tennis Arena', 'Beach Tennis Aulas', 'Carro', 'Lote',
+    'Condomínio', 'IPVA',
   ];
 
   @override
@@ -50,9 +44,11 @@ class _RecurringExpensesFormPageState extends State<RecurringExpensesFormPage> {
       _selectedType = widget.recurringExpenses!.name;
       _signUpDate = widget.recurringExpenses!.signUpDate;
       _isActive = widget.recurringExpenses!.isActive;
-      _valorController.text = widget.recurringExpenses!.valor
-          .toStringAsFixed(2)
-          .replaceAll('.', ',');
+      _valorController.text = widget.recurringExpenses!.valor.toStringAsFixed(2).replaceAll('.', ',');
+      if (widget.recurringExpenses!.parcelasTotais != null) {
+        _ehParcelado = true;
+        _parcelasController.text = widget.recurringExpenses!.parcelasTotais.toString();
+      }
     }
   }
 
@@ -60,19 +56,23 @@ class _RecurringExpensesFormPageState extends State<RecurringExpensesFormPage> {
     if (_formKey.currentState!.validate() && _signUpDate != null) {
       final valor = UtilBrasilFields.converterMoedaParaDouble(_valorController.text);
 
+      if (_ehParcelado && (_parcelasController.text.isEmpty || int.tryParse(_parcelasController.text) == null)) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Informe o número de parcelas')));
+        return;
+      }
+
       final data = {
         'tipo': _selectedType,
         'dataVencimento': _signUpDate!.toIso8601String(),
         'ativo': _isActive,
         'valor': valor,
+        'parcelasTotais': _ehParcelado ? int.parse(_parcelasController.text) : null,
       };
 
       final docRef = FirebaseFirestore.instance
           .collection('users')
           .doc(widget.usuario)
           .collection('despesas_recorrentes');
-
-      print('🟢 Salvando em: users/${widget.usuario}/despesas_recorrentes');
 
       if (widget.recurringExpenses == null) {
         await docRef.add(data);
@@ -97,6 +97,7 @@ class _RecurringExpensesFormPageState extends State<RecurringExpensesFormPage> {
   @override
   void dispose() {
     _valorController.dispose();
+    _parcelasController.dispose();
     super.dispose();
   }
 
@@ -140,10 +141,20 @@ class _RecurringExpensesFormPageState extends State<RecurringExpensesFormPage> {
               ),
               SizedBox(height: 16),
               SwitchListTile(
-                title: Text('Ativo'),
-                value: _isActive,
-                onChanged: (val) => setState(() => _isActive = val),
+                title: Text('Despesa com parcelas limitadas?'),
+                value: _ehParcelado,
+                onChanged: (val) => setState(() {
+                  _ehParcelado = val;
+                  if (!val) _parcelasController.clear();
+                }),
               ),
+              if (_ehParcelado)
+                TextFormField(
+                  controller: _parcelasController,
+                  decoration: InputDecoration(labelText: 'Quantidade de parcelas'),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                ),
               SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _salvar,

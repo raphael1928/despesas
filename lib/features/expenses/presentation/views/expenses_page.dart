@@ -5,6 +5,7 @@ import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../pages/coletar_nome_page.dart';
+import '../../../monthly_budget/presentation/views/monthly_budget_page.dart';
 import '../../../recurring_expenses/presentation/views/recurring_expenses_page.dart';
 import '../../../reports/presentation/views/reports_page.dart';
 import 'package:flu/features/subscriptions/presentation/views/subscriptions_page.dart';
@@ -304,6 +305,19 @@ class _DespesasPageState extends State<DespesasPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => SubscriptionsPage(usuario: widget.usuario)),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.pie_chart),
+              title: Text('Orçamento Mensal'),
+              onTap: () {
+                Navigator.pop(context); // fecha o drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => MonthlyBudgetPage(usuario: widget.usuario),
+                  ),
                 );
               },
             ),
