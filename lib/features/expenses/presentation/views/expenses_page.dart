@@ -5,10 +5,18 @@ import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../pages/coletar_nome_page.dart';
-import '../../../monthly_budget/presentation/views/monthly_budget_page.dart';
+import '../../../emergency_reserve/presentation/views/emergency_reserve_page.dart';
+import '../../../expense_limit/presentation/views/expense_limit_page.dart';
 import '../../../recurring_expenses/presentation/views/recurring_expenses_page.dart';
 import '../../../reports/presentation/views/reports_page.dart';
 import 'package:flu/features/subscriptions/presentation/views/subscriptions_page.dart';
+
+extension CapitalizeExtension on String {
+  String capitalize() {
+    if (isEmpty) return this;
+    return this[0].toUpperCase() + substring(1).toLowerCase();
+  }
+}
 
 class DespesasPage extends StatefulWidget {
   final String usuario;
@@ -285,6 +293,17 @@ class _DespesasPageState extends State<DespesasPage> {
               ),
             ),
             ListTile(
+              leading: Icon(Icons.stream),
+              title: Text('Assinaturas'),
+              onTap: () {
+                Navigator.pop(context); // fecha o drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => SubscriptionsPage(usuario: widget.usuario)),
+                );
+              },
+            ),
+            ListTile(
               leading: Icon(Icons.cached),
               title: Text('Despesas Recorrentes'),
               onTap: () {
@@ -298,25 +317,27 @@ class _DespesasPageState extends State<DespesasPage> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.stream),
-              title: Text('Assinaturas'),
-              onTap: () {
-                Navigator.pop(context); // fecha o drawer
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => SubscriptionsPage(usuario: widget.usuario)),
-                );
-              },
-            ),
-            ListTile(
               leading: Icon(Icons.pie_chart),
-              title: Text('Orçamento Mensal'),
+              title: Text('Limite de Despesas'),
               onTap: () {
                 Navigator.pop(context); // fecha o drawer
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => MonthlyBudgetPage(usuario: widget.usuario),
+                    builder: (_) => ExpenseLimitPage(usuario: widget.usuario),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.savings),
+              title: Text('Reserva de Emergência'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => EmergencyReservePage(usuario: widget.usuario),
                   ),
                 );
               },
@@ -345,7 +366,9 @@ class _DespesasPageState extends State<DespesasPage> {
         children: [
           ElevatedButton(
             onPressed: _selecionarData,
-            child: Text(DateFormat('dd/MM/yyyy').format(_dataSelecionada)),
+            child: Text(
+              '${DateFormat('dd/MM/yyyy').format(_dataSelecionada)} - ${DateFormat('EEEE', 'pt_BR').format(_dataSelecionada).capitalize()}',
+            ),
           ),
           SizedBox(height: 10),
           DropdownButton<String>(

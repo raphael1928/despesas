@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/services.dart';
 
-class MonthlyBudgetFormPage extends StatefulWidget {
+class ExpenseLimitFormPage extends StatefulWidget {
   final String usuario;
 
-  const MonthlyBudgetFormPage({super.key, required this.usuario});
+  const ExpenseLimitFormPage({super.key, required this.usuario});
 
   @override
-  State<MonthlyBudgetFormPage> createState() => _MonthlyBudgetFormPageState();
+  State<ExpenseLimitFormPage> createState() => _ExpenseLimitFormPageState();
 }
 
-class _MonthlyBudgetFormPageState extends State<MonthlyBudgetFormPage> {
+class _ExpenseLimitFormPageState extends State<ExpenseLimitFormPage> {
   final _formKey = GlobalKey<FormState>();
   final _valorController = TextEditingController();
 
@@ -62,7 +62,7 @@ class _MonthlyBudgetFormPageState extends State<MonthlyBudgetFormPage> {
     await FirebaseFirestore.instance
         .collection('users')
         .doc(widget.usuario)
-        .collection('orcamento_mensal')
+        .collection('limite_despesas')
         .add(data);
 
     if (mounted) Navigator.pop(context);
@@ -77,7 +77,7 @@ class _MonthlyBudgetFormPageState extends State<MonthlyBudgetFormPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Novo Orçamento')),
+      appBar: AppBar(title: const Text('Novo Limite')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -109,7 +109,7 @@ class _MonthlyBudgetFormPageState extends State<MonthlyBudgetFormPage> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _valorController,
-                decoration: const InputDecoration(labelText: 'Valor planejado (R\$)'),
+                decoration: const InputDecoration(labelText: 'Limite (R\$)'),
                 keyboardType: TextInputType.number,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,

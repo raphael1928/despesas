@@ -22,6 +22,8 @@ dependencies:
   connectivity_plus: ^5.0.2
   provider: ^6.1.1
   flutter_svg: ^2.0.7
+  percent_indicator: ^4.2.2
+  fl_chart: ^0.66.1
 
 dev_dependencies:
   flutter_test:

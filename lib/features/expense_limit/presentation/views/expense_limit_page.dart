@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'monthly_budget_form_page.dart';
+import 'expense_limit_form_page.dart';
 
-class MonthlyBudgetPage extends StatelessWidget {
+class ExpenseLimitPage extends StatelessWidget {
   final String usuario;
 
-  const MonthlyBudgetPage({super.key, required this.usuario});
+  const ExpenseLimitPage({super.key, required this.usuario});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class MonthlyBudgetPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Orçamento Mensal'),
+        title: const Text('Limite de Despesas'),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -24,7 +24,7 @@ class MonthlyBudgetPage extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => MonthlyBudgetFormPage(usuario: usuario),
+                  builder: (_) => ExpenseLimitFormPage(usuario: usuario),
                 ),
               );
             },
@@ -35,7 +35,7 @@ class MonthlyBudgetPage extends StatelessWidget {
         stream: FirebaseFirestore.instance
             .collection('users')
             .doc(usuario)
-            .collection('orcamento_mensal')
+            .collection('limite_despesas')
             .where('ano', isEqualTo: ano)
             .where('mes', isEqualTo: mes)
             .snapshots(),
@@ -93,7 +93,7 @@ class MonthlyBudgetPage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 4),
-                          Text('Orçado: R\$ ${valorOrcado.toStringAsFixed(2)}'),
+                          Text('Limite: R\$ ${valorOrcado.toStringAsFixed(2)}'),
                           const SizedBox(height: 4),
                           Text('Gasto: R\$ ${valorGasto.toStringAsFixed(2)}'),
                           const SizedBox(height: 4),
