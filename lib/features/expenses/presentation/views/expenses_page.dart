@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../pages/coletar_nome_page.dart';
 import '../../../assets/presentation/views/assets_page.dart';
-import '../../../budget_goals/presentation/views/budget_goals_page.dart';
 import '../../../emergency_reserve/presentation/views/emergency_reserve_page.dart';
 import '../../../expense_limit/presentation/views/expense_limit_page.dart';
 import '../../../goals/presentation/views/goals_page.dart';
@@ -328,19 +327,6 @@ class _DespesasPageState extends State<DespesasPage> {
                   context,
                   MaterialPageRoute(
                     builder: (_) => ExpenseLimitPage(usuario: widget.usuario),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.flag),
-              title: Text('Metas Orçamentárias'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BudgetGoalsPage(usuario: widget.usuario),
                   ),
                 );
               },
