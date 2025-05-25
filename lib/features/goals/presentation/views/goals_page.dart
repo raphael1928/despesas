@@ -67,8 +67,8 @@ class GoalsPage extends StatelessWidget {
               final valor = (data['valor'] as num?)?.toDouble() ?? 0.0;
               final icone = IconData(data['icone'] ?? Icons.flag.codePoint, fontFamily: 'MaterialIcons');
 
-              return FutureBuilder<QuerySnapshot>(
-                future: goalsRef.doc(doc.id).collection('lancamentos').get(),
+              return StreamBuilder<QuerySnapshot>(
+                stream: goalsRef.doc(doc.id).collection('lancamentos').snapshots(),
                 builder: (context, lancSnapshot) {
                   final lancDocs = lancSnapshot.data?.docs ?? [];
                   final somaLancamentos = lancDocs.fold<double>(
