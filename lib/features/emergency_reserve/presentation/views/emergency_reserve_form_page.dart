@@ -50,7 +50,7 @@ class _EmergencyReserveFormPageState extends State<EmergencyReserveFormPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Novo Lançamento')),
+      appBar: AppBar(title: const Text('Lançamento')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(

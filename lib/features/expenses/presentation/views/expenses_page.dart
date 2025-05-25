@@ -5,8 +5,11 @@ import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../pages/coletar_nome_page.dart';
+import '../../../assets/presentation/views/assets_page.dart';
+import '../../../budget_goals/presentation/views/budget_goals_page.dart';
 import '../../../emergency_reserve/presentation/views/emergency_reserve_page.dart';
 import '../../../expense_limit/presentation/views/expense_limit_page.dart';
+import '../../../goals/presentation/views/goals_page.dart';
 import '../../../recurring_expenses/presentation/views/recurring_expenses_page.dart';
 import '../../../reports/presentation/views/reports_page.dart';
 import 'package:flu/features/subscriptions/presentation/views/subscriptions_page.dart';
@@ -330,7 +333,46 @@ class _DespesasPageState extends State<DespesasPage> {
               },
             ),
             ListTile(
+              leading: Icon(Icons.flag),
+              title: Text('Metas Orçamentárias'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BudgetGoalsPage(usuario: widget.usuario),
+                  ),
+                );
+              },
+            ),
+            ListTile(
               leading: Icon(Icons.savings),
+              title: Text('Objetivos'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GoalsPage(usuario: widget.usuario),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.account_balance),
+              title: Text('Patrimônio'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AssetsPage(usuario: widget.usuario),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.security),
               title: Text('Reserva de Emergência'),
               onTap: () {
                 Navigator.pop(context);
